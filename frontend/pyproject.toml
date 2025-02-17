@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "frontend"
+version = "0.1.0"
+description = ""
+authors = ["jonra1993 <jon_ra@hotmail.es>"]
+readme = "README.md"
+
+[tool.poetry.scripts]
+streamlit-hello = "streamlit.cli:main"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+streamlit = "^1.35.0"
+matplotlib = "^3.9.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
