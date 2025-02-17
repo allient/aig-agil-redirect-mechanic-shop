@@ -12,7 +12,7 @@ RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=/opt/poetry python
     poetry config virtualenvs.create false
 
 # Copy the Excel file into the container at /app
-COPY talleres.xlsx /app/
+COPY frontend/talleres.xlsx /app/
 
 # Copy the current directory contents into the container at /app
 COPY . /app
