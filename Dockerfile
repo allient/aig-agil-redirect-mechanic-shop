@@ -16,7 +16,7 @@ COPY . /app
 
 # Allow installing dev dependencies to run tests
 ARG INSTALL_DEV=false
-RUN poetry install --no-root --no-dev
+RUN bash -c "if true; then poetry install --no-root; fi"
 
 # Make port 8501 available to the world outside this container
 EXPOSE 8501
