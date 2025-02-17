@@ -12,6 +12,7 @@ streamlit-hello = "streamlit.cli:main"
 python = "^3.11"
 streamlit = "^1.35.0"
 matplotlib = "^3.9.0"
+openpyxl = "^3.1.5"
 
 
 [build-system]
