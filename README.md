@@ -1,1 +1,2 @@
-# aig-agil-redirect-mechanic-shop
+
+poetry run streamlit run frontend/app.py
