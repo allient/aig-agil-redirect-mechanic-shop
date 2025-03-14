@@ -64,6 +64,21 @@ def direccionar_taller(producto_auto, marca_vehiculo, anio_vehiculo, provincia, 
 
 
             if not talleres_especiales.empty:
+
+                if len(talleres_especiales) < 2:
+                    talleres_multimarca = talleres_df[
+                        (talleres_df['PROVINCIA'] == provincia) &
+                        (talleres_df['CIUDAD'] == ciudad) &
+                        (talleres_df['TIPO TALLER'].isin(['KPG - Multimarca', 'Convenio - Multimarca'])) &
+                        (~talleres_df['NOMBRE COMERCIAL'].str.contains('PITS', na=False))
+                    ]
+
+                    # Seleccionar hasta 3 talleres multimarca adicionales
+                    talleres_complementarios = talleres_multimarca.head(5 - len(talleres_especiales))
+                    
+                    # Unir los talleres especiales con los talleres multimarca adicionales
+                    talleres_especiales = pd.concat([talleres_especiales, talleres_complementarios])
+
                 
                 return talleres_especiales[["NOMBRE COMERCIAL", "FABRICANTE", "TIPO TALLER", "PROVINCIA", "CIUDAD", "DIRECCIÓN"]]
     
@@ -73,6 +88,22 @@ def direccionar_taller(producto_auto, marca_vehiculo, anio_vehiculo, provincia, 
             talleres_filtrados = talleres_filtrados[talleres_filtrados['TIPO TALLER'].isin(['KPG - Concesionario', 'Convenio - Concesionario'])]
             # Aplicar filtro por marca de vehículo
             talleres_filtrados = talleres_filtrados[talleres_filtrados['FABRICANTE'].str.lower().str.contains(marca_vehiculo, na=False)]
+
+
+            if len(talleres_filtrados) < 2: 
+                talleres_multimarca = talleres_df[
+                    (talleres_df['PROVINCIA'] == provincia) &
+                    (talleres_df['CIUDAD'] == ciudad) &
+                    (talleres_df['TIPO TALLER'].isin(['KPG - Multimarca', 'Convenio - Multimarca'])) &
+                    (~talleres_df['NOMBRE COMERCIAL'].str.contains('PITS', na=False))
+                ]  
+
+                # Seleccionar hasta 3 talleres multimarca adicionales
+                talleres_complementarios = talleres_multimarca.head(5 - len(talleres_filtrados))
+                    
+                # Unir los talleres especiales con los talleres multimarca adicionales
+                talleres_filtrados = pd.concat([talleres_filtrados, talleres_complementarios])
+            
         else:
             talleres_filtrados = talleres_filtrados[talleres_filtrados['TIPO TALLER'].isin(['KPG - Multimarca', 'Convenio - Multimarca'])]
             talleres_filtrados = talleres_filtrados[~talleres_filtrados['NOMBRE COMERCIAL'].str.contains('PITS', na=False)]
