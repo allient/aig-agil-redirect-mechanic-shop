@@ -123,7 +123,7 @@ async def direccionar_taller(producto_auto, marca_vehiculo, anio_vehiculo, provi
             "205 AIG - AUTOSEGURO SIO PLUS", "229 - BPAC - NOVAPACK CON AMPARO", "230 - BPAC - NOVAPACK SIN AMPARO",
             "244 AIG - AUTOSEGURO LOJA SIO PLUS", "277 AUTOSEGURO SIO PLUS NUEVOS", "352 BPAC 2024", "355 BPAC COMERCIAL 2024"
         ],
-        "talleres_pits": ["UNINOVA 1-2", "UNINOVA 3-5", "UNINOVA 40", "UNINOVA VH COMERCIAL", "PRACTIAUTO"],
+        "talleres_pits": ["UNINOVA 1-2", "UNINOVA 3-5", "UNINOVA 40", "UNINOVA VH COMERCIAL", "PRACTIAUTO", "AUTOFLOTAS PRACTIAUTO"],
         "taller_szk": ["SUZUKI", "ALTON", "SUZUKI NUEVOS", "ALTON NUEVOS", "MIGRACION SUZUKI", "MIGRACION ALTON", "357 SUZUKI SEMI"],
         "taller_condelpi": ["AUTO CONDELPI", "AUTO CONDELPI 1", "POST RENTING", "CONDELPI-PIK-FUR", "CONDELPI-PESADOS", "RENTING - NESTLE"],
         "taller_ayasa": ["AYASA", "AYASA23", "AYASA23 MIG"],
