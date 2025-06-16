@@ -123,7 +123,7 @@ async def direccionar_taller(producto_auto, marca_vehiculo, anio_vehiculo, provi
             "205 AIG - AUTOSEGURO SIO PLUS", "229 - BPAC - NOVAPACK CON AMPARO", "230 - BPAC - NOVAPACK SIN AMPARO",
             "244 AIG - AUTOSEGURO LOJA SIO PLUS", "277 AUTOSEGURO SIO PLUS NUEVOS", "352 BPAC 2024", "355 BPAC COMERCIAL 2024"
         ],
-        "talleres_pits": ["UNINOVA 1-2", "UNINOVA 3-5", "UNINOVA 40", "UNINOVA VH COMERCIAL", "PRACTIAUTO", "AUTOFLOTAS PRACTIAUTO"],
+        "talleres_pits": ["UNINOVA 1-2", "UNINOVA 3-5", "UNINOVA 40", "UNINOVA VH COMERCIAL", "PRACTIAUTO"],
         "taller_szk": ["SUZUKI", "ALTON", "SUZUKI NUEVOS", "ALTON NUEVOS", "MIGRACION SUZUKI", "MIGRACION ALTON", "357 SUZUKI SEMI"],
         "taller_condelpi": ["AUTO CONDELPI", "AUTO CONDELPI 1", "POST RENTING", "CONDELPI-PIK-FUR", "CONDELPI-PESADOS", "RENTING - NESTLE"],
         "taller_ayasa": ["AYASA", "AYASA23", "AYASA23 MIG"],
@@ -134,9 +134,8 @@ async def direccionar_taller(producto_auto, marca_vehiculo, anio_vehiculo, provi
     talleres_especiales = []
     
     for regla, productos in reglas_especificas.items():
-        if producto_auto in productos:
+        if any(pat in producto_auto for pat in productos):
             regla_aplicada = regla
-            print(f"Regla aplicada: {regla}")
             
             if regla == "talleres_concesionario" or regla == "taller_condelpi":
                 talleres_especiales = [t for t in talleres if shop_type_dict.get(t["mechanic_shop_type"]) in ['KPG-CONCESIONARIO', 'CONVENIO-CONCESIONARIO']]
