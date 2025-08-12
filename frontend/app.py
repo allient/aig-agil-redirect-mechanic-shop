@@ -14,6 +14,19 @@ def get_supabase_client() -> Client:
     return create_client(url, key)
 
 
+def obtener_talleres_maresa_guayaquil(talleres, shop_type_dict=None):
+    """
+    Devuelve únicamente el taller de Corporación Maresa en Guayaquil,
+    identificado por su ID específico.
+    """
+    id_maresa_guayaquil = "87dde248-0706-4543-9695-7bf2c71817f8"
+    
+    return [
+        t for t in talleres
+        if str(t.get("id")) == id_maresa_guayaquil
+    ]
+
+
 def obtener_talleres_multimarca(talleres, shop_type_dict):
     ids_prioritarios = {
         "807bfd88-3f6a-4de4-8949-78dc615c288a",
@@ -116,6 +129,7 @@ async def direccionar_taller(producto_auto, marca_vehiculo, anio_vehiculo, provi
     
     # Definir reglas específicas
     reglas_especificas = {
+        "taller_maresa_gye":["RENTING-LIVIANOS", "RENTING-PESADOS", "RENTING-MOTOS", "RENTING-OTECEL", "RENTING - NESTLE", "RENTING - GO-RENT A CAR", "HERTZ", "RENTING L-A", "RENTING FULL COBERTURA"],
         "talleres_concesionario": [
             "AMERAFIN PERDIDA TOTAL SESA", "74 AIG - AUTOSEGURO SIO LIVIANOS", "75 AIG - AUTOSEGURO BPAC LIVIANOS",
             "78 AIG - AUTOSEGURO SIO PESADOS", "80 AIG - AMERAFIN BPAC PESADOS", "169 AIG - AUTOSEGURO SIO LIVIANOS SESA",
@@ -130,14 +144,19 @@ async def direccionar_taller(producto_auto, marca_vehiculo, anio_vehiculo, provi
         "taller_casabaca": ["1001 CARROS SEMINUEVOS", "ULTRA CASABACA", "ULTRA CASABACA NUEVOS", "NUEVOS 1001 CARROS", "MIGRACION CASABACA", "MIGRACIÓN 1001 CARROS"]
     }
     
+    
     regla_aplicada = None
     talleres_especiales = []
     
     for regla, productos in reglas_especificas.items():
         if any(pat in producto_auto for pat in productos):
             regla_aplicada = regla
+
+            if regla == "taller_maresa_gye" and ( provincia == "Guayas" and ciudad == "Guayaquil" ):
+                talleres_especiales = obtener_talleres_maresa_guayaquil(talleres, shop_type_dict)
+                return {'message': f"Lista de talleres en esta ubicación {provincia} - {ciudad} fue encontrada con éxito.", 'mechanic_shop_list': talleres_especiales} 
             
-            if regla == "talleres_concesionario" or regla == "taller_condelpi":
+            elif regla == "talleres_concesionario" or regla == "taller_condelpi":
                 talleres_especiales = [t for t in talleres if shop_type_dict.get(t["mechanic_shop_type"]) in ['KPG-CONCESIONARIO', 'CONVENIO-CONCESIONARIO']]
                 # Obtener la marca solo para talleres concesionarios
                 marca_query = (
