@@ -91,18 +91,9 @@ async def direccionar_taller(producto_auto, marca_vehiculo, anio_vehiculo, provi
     anio_actual = datetime.now().year
     
     # 🚨 Regla: Si ProductoAuto contiene el patrón 'MOTO' en cualquier forma, no se puede realizar el direccionamiento
-    if (
-        re.search(r'\bmoto', producto_auto, re.IGNORECASE)  # Detecta cualquier "moto" o "motos"
-        and not (
-            producto_auto.strip().upper() == "RENTING-MOTOS"
-            and ciudad.strip().lower() == "guayaquil"
-            and provincia.strip().lower() == "guayas"
-        )
-    ):
-        return {
-            'message': 'No se puede realizar el direccionamiento para productos relacionados con motos.',
-            'mechanic_shop_list': []
-        }
+    if re.search(r'\bmotos\b', producto_auto, re.IGNORECASE):
+        return {'message': 'No se puede realizar el direccionamiento para productos relacionados con motos.', 'mechanic_shop_list': []}
+    
     
     # Obtener talleres desde Supabase filtrando por provincia y ciudad
     talleres_query = (
