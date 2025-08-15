@@ -86,14 +86,14 @@ def obtener_talleres_multimarca_kia(talleres, shop_type_dict):
     return talleres_ordenados
 
 
-async def direccionar_taller(producto_auto, marca_vehiculo, anio_vehiculo, provincia, ciudad, supabase_client):
+
+async def direccionar_taller(producto_auto, marca_vehiculo, anio_vehiculo, provincia, ciudad, tipo_siniestro="collision", supabase_client=None):
     
     anio_actual = datetime.now().year
     
     # 🚨 Regla: Si ProductoAuto contiene el patrón 'MOTO' en cualquier forma, no se puede realizar el direccionamiento
     if re.search(r'\bmotos\b', producto_auto, re.IGNORECASE):
         return {'message': 'No se puede realizar el direccionamiento para productos relacionados con motos.', 'mechanic_shop_list': []}
-    
     
     # Obtener talleres desde Supabase filtrando por provincia y ciudad
     talleres_query = (
@@ -138,13 +138,12 @@ async def direccionar_taller(producto_auto, marca_vehiculo, anio_vehiculo, provi
             "205 AIG - AUTOSEGURO SIO PLUS", "229 - BPAC - NOVAPACK CON AMPARO", "230 - BPAC - NOVAPACK SIN AMPARO",
             "244 AIG - AUTOSEGURO LOJA SIO PLUS", "277 AUTOSEGURO SIO PLUS NUEVOS", "352 BPAC 2024", "355 BPAC COMERCIAL 2024"
         ],
-        "talleres_pits": ["UNINOVA 1-2", "UNINOVA 3-5", "UNINOVA 40", "UNINOVA VH COMERCIAL", "PRACTIAUTO"],
+        "talleres_pits": ["UNINOVA 1-2", "UNINOVA 3-5", "UNINOVA 40", "UNINOVA VH COMERCIAL", "PRACTIAUTO", "AUTOFLOTAS PRACTIAUTO", "UNINOVA"],
         "taller_szk": ["SUZUKI", "ALTON", "SUZUKI NUEVOS", "ALTON NUEVOS", "MIGRACION SUZUKI", "MIGRACION ALTON", "357 SUZUKI SEMI"],
         "taller_condelpi": ["AUTO CONDELPI", "AUTO CONDELPI 1", "POST RENTING", "CONDELPI-PIK-FUR", "CONDELPI-PESADOS", "RENTING - NESTLE"],
         "taller_ayasa": ["AYASA", "AYASA23", "AYASA23 MIG"],
-        "taller_casabaca": ["1001 CARROS SEMINUEVOS", "ULTRA CASABACA", "ULTRA CASABACA NUEVOS", "NUEVOS 1001 CARROS", "MIGRACION CASABACA", "MIGRACIÓN 1001 CARROS"]
+        "taller_casabaca": ["1001 CARROS SEMINUEVOS", "ULTRA CASABACA", "ULTRA CASABACA NUEVOS", "NUEVOS 1001 CARROS", "MIGRACION CASABACA", "MIGRACIÓN 1001 CARROS"],
     }
-    
     
     regla_aplicada = None
     talleres_especiales = []
@@ -152,6 +151,7 @@ async def direccionar_taller(producto_auto, marca_vehiculo, anio_vehiculo, provi
     for regla, productos in reglas_especificas.items():
         if any(pat in producto_auto for pat in productos):
             regla_aplicada = regla
+            print(f"************Regla aplicada************: {regla}")
 
             if regla == "taller_maresa_gye" and ( provincia == "Guayas" and ciudad == "Guayaquil" ):
                 talleres_especiales = obtener_talleres_maresa_guayaquil(talleres, shop_type_dict)
@@ -200,11 +200,11 @@ async def direccionar_taller(producto_auto, marca_vehiculo, anio_vehiculo, provi
                 talleres_marca_result = talleres_marca_response.data
                 talleres_marca_ids = [t["mechanic_shop_id"] for t in talleres_marca_result]
                 talleres_especiales = [t for t in talleres_especiales if t["id"] in talleres_marca_ids]
-                
- 
-
+            
+            
             elif regla == "talleres_pits":
-                talleres_especiales = [t for t in talleres if shop_type_dict.get(t["mechanic_shop_type"]) == 'CONVENIO-MULTIMARCA' and "PITS" in t["name"]]
+                if tipo_siniestro == "collision":
+                    talleres_especiales = [t for t in talleres if shop_type_dict.get(t["mechanic_shop_type"]) == 'CONVENIO-MULTIMARCA' and "PITS" in t["name"]]                
                 
             else:
                 patron = regla.replace("taller_", "").strip().lower()
@@ -324,10 +324,12 @@ async def direccionar_taller(producto_auto, marca_vehiculo, anio_vehiculo, provi
             # Si hay talleres especiales
             if talleres_especiales:
                 print("talleres_especiales_año")
-
+                # print("talleres_especiales:", [t["name"] for t in talleres_especiales])
                 # Obtener talleres multimarca complementarios
                 talleres_multimarca = obtener_talleres_multimarca(talleres, shop_type_dict)
                 talleres_complementarios = talleres_multimarca[:5]
+
+
 
                 # Filtrar Metrocar S.A. si está presente
                 metrocar = None
@@ -385,6 +387,7 @@ async def direccionar_taller(producto_auto, marca_vehiculo, anio_vehiculo, provi
 
                         
         return {'message': f"Lista de talleres en esta ubicación {provincia} - {ciudad} fue encontrada con éxito.", 'mechanic_shop_list': talleres_especiales} 
+
 
 
     
